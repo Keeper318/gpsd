@@ -1795,6 +1795,8 @@ static gps_mask_t subframe_glo(struct gps_device_t *session,
     case 14:
         if (5 == framenum) {
             word_desc = "Extra 1";
+            session->dut1_b1 = (words[0] >> 16) & BITMASK(11);
+            session->dut1_b2 = (words[0] >> 6) & BITMASK(10);
         } else {
             word_desc = "Almanac 1";
         }

@@ -609,6 +609,8 @@ struct gps_device_t {
     int fixcnt;                         // count of fixes from this device
     int last_word_gal;                  // last subframe word from Galileo
     int last_svid3_gal;                 // last SVID3 from Galileo
+    uint16_t dut1_b1;                   // dUT1 B1 constant from GLONASS
+    uint16_t dut1_b2;                   // dUT1 B2 constant from GLONASS
     struct gps_fix_t newdata;           // where drivers put their data
     struct gps_fix_t lastfix;           // not quite yet ready for oldfix
     struct gps_fix_t oldfix;            // previous fix for error modeling
