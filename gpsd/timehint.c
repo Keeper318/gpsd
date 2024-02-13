@@ -269,9 +269,10 @@ struct sock_sample {
     struct timeval tv;
     double offset;
     int pulse;
-    int leap;       // notify that a leap second is upcoming
-    int _pad;
-    int magic;      // must be SOCK_MAGIC
+    int leap;          // notify that a leap second is upcoming
+    uint16_t dut1_b1;  // dUT1 B1 constant from GLONASS
+    uint16_t dut1_b2;  // dUT1 B2 constant from GLONASS
+    int magic;         // must be SOCK_MAGIC
 };
 
 // for chrony SOCK interface, which allows nSec timekeeping
@@ -357,13 +358,14 @@ void chrony_send(struct gps_device_t *session, int fd, struct timedelta_t *td)
      * if tv_sec greater than 2 then tv_nsec loses precision, but
      * not a big deal as slewing will be required */
     sample.offset = TS_SUB_D(&td->real, &td->clock);
-    sample._pad = 0;
+    sample.dut1_b1 = session->dut1_b1;
+    sample.dut1_b2 = session->dut1_b2;
 
     GPSD_LOG(LOG_PROG, &session->context->errout,
-             "NTP: chrony_send(%d) %s @ %s Offset: %0.9f\n",
+             "NTP: chrony_send(%d) %s @ %s Offset: %0.9f B1: %u B2: %u\n",
              fd, timespec_str(&td->real, real_str, sizeof(real_str)),
              timespec_str(&td->clock, clock_str, sizeof(clock_str)),
-             sample.offset);
+             sample.offset, sample.dut1_b1, sample.dut1_b2);
     if (-1 >= send(fd, &sample, sizeof (sample), 0)) {
 	GPSD_LOG(LOG_ERROR, &session->context->errout,
                  "NTP: chrony_send(%d) %s(%d)\n",
